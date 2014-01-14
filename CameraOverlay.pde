@@ -61,7 +61,7 @@ void draw() {
     textFont(fOSD);
     fill(cOSD);
     textAlign(CENTER, CENTER);
-    text("DOWNLINK LOST",width/2,height/2);
+    text("DOWNLINK LOST",width/2,height/2);    
   }
 }
 
