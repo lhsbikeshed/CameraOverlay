@@ -8,7 +8,10 @@ boolean gameStatus = false;
 Capture cam;
 PImage testImage;
 OscP5 oscP5;
-
+int locX = 1024;
+int locY = 0;
+PFont fOSD = createFont("Terminal", 72, false);
+color cOSD = color(47, 237, 19);
 
 void setup() {
   size(1024, 768);
@@ -19,22 +22,20 @@ void setup() {
     cam = new Capture(this, 640, 480, "SMI Grabber Device", 30);
     cam.start();
   }
-
   oscP5 = new OscP5(this, 12010);
 }
 
 void hide() {
-  frame.setLocation(1024,0);
+  frame.setLocation(locX, locY);
   frame.setAlwaysOnTop(false);
   frame.hide();
 }
 
 void show() {
-  frame.setLocation(1024,0);
+  frame.setLocation(locX, locY);
   frame.setAlwaysOnTop(true);
   frame.show();
 }
-
 
 void draw() {
   if (gameStatus) {
@@ -50,15 +51,17 @@ void draw() {
     }
   } 
   else {
-    show();
     loadPixels();
-    //This may need slowing down. It's a bit trippy.
     for (int i = 0; i < pixels.length; i++ ) {
       float rand = random(255);
       color c = color(rand);
       pixels[i] = c;
     }
     updatePixels();
+    textFont(fOSD);
+    fill(cOSD);
+    textAlign(CENTER, CENTER);
+    text("DOWNLINK LOST",width/2,height/2);
   }
 }
 
@@ -74,6 +77,7 @@ void oscEvent(OscMessage msg) {
   }   
   else if (msg.checkAddrPattern("/scene/youaredead")) {
     gameStatus = false;
+    show();
   }
 }
 
