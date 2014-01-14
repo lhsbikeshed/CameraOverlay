@@ -4,7 +4,7 @@ import oscP5.*;
 import netP5.*;
 
 boolean testMode = true;
-boolean gameStatus;
+boolean gameStatus = false;
 Capture cam;
 PImage testImage;
 OscP5 oscP5;
