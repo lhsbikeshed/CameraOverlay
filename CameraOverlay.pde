@@ -67,10 +67,10 @@ void oscEvent(OscMessage msg) {
   else if (msg.checkAddrPattern("/system/externalCam/hide")) {
     if (gameStatus) hide();
   }   
-  else if (msg.checkAddrPattern("/the/game/has/been/reset")) { //Find the actual OSC format for this..
+  else if (msg.checkAddrPattern("/game/reset")) {
     gameStatus = true;
   }   
-  else if (msg.checkAddrPattern("/the/goddamn/ship/blew/up")) { //And this...
+  else if (msg.checkAddrPattern("/scene/youaredead")) {
     gameStatus = false;
   }
 }
