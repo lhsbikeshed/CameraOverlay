@@ -24,11 +24,13 @@ void setup() {
 }
 
 void hide() {
+  frame.setLocation(1024,0)
   frame.setAlwaysOnTop(false);
   frame.hide();
 }
 
 void show() {
+  frame.setLocation(1024,0)
   frame.setAlwaysOnTop(true);
   frame.show();
 }
