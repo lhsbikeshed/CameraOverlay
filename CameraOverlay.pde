@@ -3,7 +3,11 @@ import processing.video.*;
 import oscP5.*;
 import netP5.*;
 
-boolean testMode = true;
+boolean testMode = false;
+
+
+//dragons past here
+
 boolean gameStatus = true;
 Capture cam;
 PImage testImage;
@@ -20,24 +24,30 @@ void setup() {
   noiseImage = loadImage("noise.png");
   if (testMode) {
     testImage = loadImage("testcam.png");
+    locX = 0;
+    locY = 0;
   } 
   else {
-    cam = new Capture(this, 640, 480, "SMI Grabber Device", 30);
+    cam = new Capture(this, 640, 480, "Manycam Virtual Webcam", 30);
     cam.start();
   }
   oscP5 = new OscP5(this, 12010);
+  frame.setLocation(locX, locY);
+  hide();
 }
 
 void hide() {
   frame.setLocation(locX, locY);
   frame.setAlwaysOnTop(false);
   frame.hide();
+  println("hide");
 }
 
 void show() {
   frame.setLocation(locX, locY);
   frame.setAlwaysOnTop(true);
   frame.show();
+  println("show");
 }
 
 void damage() {
@@ -79,18 +89,18 @@ void draw() {
 }
 
 void oscEvent(OscMessage msg) {
-  if (msg.checkAddrPattern("/system/externalCam/show")) {
+  if (msg.checkAddrPattern("/system/web/show")) {
     if (gameStatus) show();
   } 
-  else if (msg.checkAddrPattern("/system/externalCam/hide")) {
+  else if (msg.checkAddrPattern("/system/webcam/hide")) {
     if (gameStatus) hide();
   }   
   else if (msg.checkAddrPattern("/game/reset")) {
     gameStatus = true;
   }   
-  else if (msg.checkAddrPattern("/scene/youaredead")) {
+  else if (msg.checkAddrPattern("/system/webcam/downLinkLost")) {
     gameStatus = false;
-    show();
+    //show(); //this has to be hidden for the credit sequence to show up :(
   }  
   else if (msg.checkAddrPattern("/ship/damage")) {
     damage();
