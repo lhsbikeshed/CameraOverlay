@@ -28,12 +28,12 @@ void setup() {
     locY = 0;
   } 
   else {
-    cam = new Capture(this, 640, 480, "Manycam Virtual Webcam", 30);
+    cam = new Capture(this,"name=Video Camera           ,size=640x480,fps=30");
     cam.start();
   }
   oscP5 = new OscP5(this, 12010);
   frame.setLocation(locX, locY);
-  hide();
+  //hide();
 }
 
 void hide() {
@@ -89,7 +89,7 @@ void draw() {
 }
 
 void oscEvent(OscMessage msg) {
-  if (msg.checkAddrPattern("/system/web/show")) {
+  if (msg.checkAddrPattern("/system/webcam/show")) {
     if (gameStatus) show();
   } 
   else if (msg.checkAddrPattern("/system/webcam/hide")) {
