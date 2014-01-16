@@ -4,17 +4,20 @@ import oscP5.*;
 import netP5.*;
 
 boolean testMode = true;
-boolean gameStatus = false;
+boolean gameStatus = true;
 Capture cam;
 PImage testImage;
+PImage noiseImage;
 OscP5 oscP5;
 int locX = 1024;
 int locY = 0;
 PFont fOSD = createFont("Terminal", 72, false);
 color cOSD = color(47, 237, 19);
+int damageTimer = -1000;
 
 void setup() {
   size(1024, 768);
+  noiseImage = loadImage("noise.png");
   if (testMode) {
     testImage = loadImage("testcam.png");
   } 
@@ -37,6 +40,11 @@ void show() {
   frame.show();
 }
 
+void damage() {
+  damageTimer = millis();
+}
+
+
 void draw() {
   if (gameStatus) {
     background(0);
@@ -48,6 +56,11 @@ void draw() {
         cam.read();
       }
       image(cam, 0, 0, width, height);
+      if ( damageTimer + 1000 > millis()) {
+        if (random(10) > 3) {
+          image(noiseImage, 0, 0, width, height);
+        }
+      }
     }
   } 
   else {
@@ -61,7 +74,7 @@ void draw() {
     textFont(fOSD);
     fill(cOSD);
     textAlign(CENTER, CENTER);
-    text("DOWNLINK LOST",width/2,height/2);    
+    text("DOWNLINK LOST", width/2, height/2);
   }
 }
 
@@ -78,6 +91,9 @@ void oscEvent(OscMessage msg) {
   else if (msg.checkAddrPattern("/scene/youaredead")) {
     gameStatus = false;
     show();
+  }  
+  else if (msg.checkAddrPattern("/ship/damage")) {
+    damage();
   }
 }
 
