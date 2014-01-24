@@ -3,12 +3,12 @@ import processing.video.*;
 import oscP5.*;
 import netP5.*;
 
-boolean testMode = false;
+boolean testMode = true;
 
 
 //dragons past here
 
-boolean gameStatus = true;
+int camStatus; // 1=Ship is alive. 2=Ship is dead 3=Static.
 Capture cam;
 PImage testImage;
 PImage noiseImage;
@@ -20,6 +20,7 @@ color cOSD = color(47, 237, 19);
 int damageTimer = -1000;
 
 void setup() {
+  camStatus = 1; //Initial assumed gamestate.
   size(1024, 768);
   noiseImage = loadImage("noise.png");
   if (testMode) {
@@ -28,12 +29,11 @@ void setup() {
     locY = 0;
   } 
   else {
-    cam = new Capture(this,"name=Video Camera           ,size=640x480,fps=30");
+    cam = new Capture(this, "name=Video Camera           ,size=640x480,fps=30"); //What.
     cam.start();
   }
   oscP5 = new OscP5(this, 12010);
   frame.setLocation(locX, locY);
-  //hide();
 }
 
 void hide() {
@@ -56,7 +56,9 @@ void damage() {
 
 
 void draw() {
-  if (gameStatus) {
+
+  switch(camStatus) {
+  case 1: //Game running
     background(0);
     if (testMode) {
       image(testImage, 0, 0, width, height);
@@ -72,8 +74,10 @@ void draw() {
         }
       }
     }
-  } 
-  else {
+    break;
+  case 2: //Game dead
+    break;
+  case 3: //Static.
     loadPixels();
     for (int i = 0; i < pixels.length; i++ ) {
       float rand = random(255);
@@ -85,22 +89,25 @@ void draw() {
     fill(cOSD);
     textAlign(CENTER, CENTER);
     text("DOWNLINK LOST", width/2, height/2);
+    break;
   }
 }
 
 void oscEvent(OscMessage msg) {
   if (msg.checkAddrPattern("/system/webcam/show")) {
-    if (gameStatus) show();
+    show();
   } 
   else if (msg.checkAddrPattern("/system/webcam/hide")) {
-    if (gameStatus) hide();
+    hide();
   }   
   else if (msg.checkAddrPattern("/game/reset")) {
-    gameStatus = true;
+    camStatus = 1;
   }   
+  else if (msg.checkAddrPattern("/scene/youaredead")) {
+    //camStatus = 2 //Added hook for ship death, in case of future shens.
+  }
   else if (msg.checkAddrPattern("/system/webcam/downLinkLost")) {
-    gameStatus = false;
-    //show(); //this has to be hidden for the credit sequence to show up :(
+    camStatus = 3;
   }  
   else if (msg.checkAddrPattern("/ship/damage")) {
     damage();
